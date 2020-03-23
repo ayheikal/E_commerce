@@ -12,14 +12,20 @@ class Product extends React.Component {
     return(
       <ProductWrapper className="col-9  mx-auto col-md-6 col-lg-3 my-3">
         <div className='card'>
-          <div className='img-container p-5'onClick={null}>
+          <ProductConsumer>
+            {(value)=>(
+          <div className='img-container p-5'onClick={()=>{
+              value.handleDetail(id);
+            }}>
             <Link to='/details'>
               <img src={img} alt={title} className='card-img-top'></img>
             </Link>
-            <button className="cart-btn" disabled={inCart?true:false} onClick={null}>
-              {inCart?(<p className='text-capitalize mb-0' disabled> in Cart</p>):<i className='fas fa-cart-plus'></i>}
+            <button className="cart-btn" disabled={inCart?true:false}
+               onClick={()=>{value.addToCart(id);value.openModal(id);}}>
+              {inCart?(<p className='text-capitalize mb-0' disabled> in Cart</p>):<i className='fas fa-cart-plus'>add to cart</i>}
             </button>
-          </div>
+          </div>)}
+          </ProductConsumer>
           {/*footer of the cart*/}
           <div className='card-footer d-flex
             justify-content-between'>

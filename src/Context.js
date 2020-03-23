@@ -12,13 +12,32 @@ export default class ProductProvider extends Component {
     this.state = {
       products:[],
       detailProduct:detailProduct,
+      cart:[],
+      modalOpen:false,
+      modalDetails:detailProduct,
+
 
     }
   }
+
+  openModal=(id)=>{
+    const product=this.getItem(id);
+    this.setState(()=>{
+      return{modalDetails:product,modalOpen:true}
+    })
+  }
+  closeModal=()=>{
+    this.setState(()=>{
+      return {modalOpen:false}
+    });
+  }
+
   getItem=(id)=>{
     const product=this.state.products.find(item=>item.id===id);
     return product;
   }
+
+
 
   componentDidMount(){
     this.setProducts();
@@ -28,7 +47,6 @@ export default class ProductProvider extends Component {
     let tempProducts=[];
     storeProducts.forEach(item=>{
       const singleItem={...item};
-      console.log(singleItem)
       tempProducts=[...tempProducts,singleItem]
     });
     this.setState(()=>{
@@ -38,12 +56,25 @@ export default class ProductProvider extends Component {
 
   handleDetail=(id)=>{
     const product=this.getItem(id);
-    this.setState(()={
+    this.setState(()=>{
       return {detailProduct:product}
     })
   }
   addToCart=(id)=>{
-    console.log('add to cart',id);
+    let tempProducts=[...this.state.products];
+    const index=tempProducts.indexOf(this.getItem(id));
+    const product=tempProducts[index];
+    product.inCart=true;
+    product.count++;
+    const price=product.price;
+    product.total+=price;
+
+    this.setState(()=>{
+      return {products:tempProducts,cart:[...this.state.cart,product]};},
+      ()=>{
+        console.log('welcom:',this.state)
+      }
+    );
   }
 
   render () {
@@ -52,6 +83,8 @@ export default class ProductProvider extends Component {
         ...this.state,
         handleDetail:this.handleDetail,
         addToCart:this.addToCart,
+        openModal:this.openModal,
+        closeModal:this.closeModal,
       }}>
 
         {this.props.children}
